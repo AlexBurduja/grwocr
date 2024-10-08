@@ -85,64 +85,9 @@
         <SwiperSlide><img src="/royalDesignPoza3.jpg"/></SwiperSlide>
         <SwiperSlide><img src="/royalDesignPoza4.jpg"/></SwiperSlide>
         <SwiperSlide><img src="/royalDesignPoza5.jpg"/></SwiperSlide>
-        {/* <div className="autoplay-progress" slot="container-end">
-          <svg viewBox="0 0 48 48" ref={progressCircle}>
-            <circle cx="24" cy="24" r="20"></circle>
-          </svg>
-          <span ref={progressContent}></span>
-        </div> */}
       </Swiper>
 
-      {/* <footer>
-        <div>
-          <img src="/royalDesignLogoMobile.svg" height={150}/>
-        </div>
-        
-        <div className="footerContent">
-          <div className="footerContent_items">
-            Contact
-
-            <div>
-              Arges, Topoloveni, Goranesti Nr.86, 115503
-            </div>
-            <div>
-              <br/>
-            </div>
-            <div>
-              0777777777
-            </div>
-            <div>
-              0777777777
-            </div>
-            <div>
-              <br/>
-            </div>
-            <div>
-              email@email.com
-            </div>
-          </div>
-
-          
-          <div>
-            Royal Design
-
-            <div>
-              Contact
-            </div>
-            <div>
-              Despre noi
-            </div>
-            <div>
-              Portofoliu
-            </div>
-          </div>
-          
-          <div>
-            Review
-          </div>
-        </div>
-      </footer> */}
-
+      
       <footer>
         
         <div className="firstOfThreeFlex">
@@ -150,18 +95,24 @@
         </div>
 
         <div className="secondOfThreeFlex">
+          <div className="footerNav">
+            <div>
+              <a href="">Acasa</a>
+            </div>  
+            <div>
+              <a href="">Despre noi</a>
+            </div>  
+            <div>
+              <a href="">Servicii</a>        
+            </div>  
+            <div>
+              <a href="">Portofoliu</a>
+            </div>  
+          </div>
+
           <div>
-            <a href="">Home</a>          
-          </div>  
-          <div>
-            <a href="">Despre noi</a>          
-          </div>  
-          <div>
-            <a href="">Servicii</a>          
-          </div>  
-          <div>
-            <a href="">Portofoliu</a>          
-          </div>  
+            <button>Configurator Gard</button>
+          </div>
         </div>
 
         <div className="thirdOfThreeFlex">
@@ -184,7 +135,7 @@
             </div>
 
             <div style={{marginTop:'10px'}}>
-            <span style={{fontWeight: 'bolder'}}>Telefon:</span> <span>0777777777</span>
+              <span style={{fontWeight: 'bolder'}}>Telefon:</span> <span>0777777777</span>
             </div>
 
             <div>
