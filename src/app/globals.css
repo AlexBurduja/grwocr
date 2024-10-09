@@ -194,16 +194,30 @@ a {
   align-items: center;
 }
 
-
 footer{
-  height: 350px;
+  height: 450px;
   background-color: #0f1626;
   color: white;
+}
 
+footer section:first-child{
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
+
+  height: 350px;
+}
+
+footer section:last-child{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+footer section:last-child p{
+  width: 65%;
+  text-align: center;
 }
 
 
@@ -222,6 +236,23 @@ footer{
   height: 65px;
   border-radius: 5px;
   border-color: transparent;
+  background-color: #242b64;
+  font-size: 15px;
+  font-family: inherit;
+  cursor: pointer;
+
+  transition: 0.2s ease-out;
+}
+
+.secondOfThreeFlex button:hover {
+  scale: 1.1;
+  background-color: #d4af37;
+  font-weight: bold;
+  color: #0f1626;
+
+  transition: 0.3s ease-in;
+
+
 }
 
 .footerNav{
@@ -229,6 +260,17 @@ footer{
   align-items: center;
   justify-content: space-between;
   width: 100%;
+
+}
+
+.footerNav a{
+  transition: 0.2s ease-out;
+}
+
+.footerNav a:hover{
+  color: #d4af37;
+
+  transition: 0.2s ease-in;
 }
 
 .thirdOfThreeFlex{
@@ -254,4 +296,12 @@ footer{
 
 .thirdOfThreeFlex_address p:first-of-type{
   margin-bottom: 10px;
+}
+
+.thirdOfThreeFlex_socials {
+  display: flex;
+  gap: 15px;
+  font-size: 25px;
+  justify-content: space-between;
+  margin-top: 15px;
 }

@@ -1,7 +1,7 @@
   "use client"
   import Image from "next/image";
   import styles from "./page.module.css";
-  import { FaEnvelope, FaPhone } from "react-icons/fa6";
+  import { FaEnvelope, FaFacebook, FaInstagram, FaPhone, FaTiktok } from "react-icons/fa6";
   import { FaSearch } from "react-icons/fa"
   import { MdSmartphone } from "react-icons/md";
   import { useRef } from "react";
@@ -79,7 +79,7 @@
         navigation={true}
         modules={[Autoplay, Pagination, Navigation]}
         className="mySwiper"
-      >
+        >
         <SwiperSlide><img src="/royalDesignPoza.jpg"/></SwiperSlide>
         <SwiperSlide><img src="/royalDesignPoza2.jpg"/></SwiperSlide>
         <SwiperSlide><img src="/royalDesignPoza3.jpg"/></SwiperSlide>
@@ -89,61 +89,71 @@
 
       
       <footer>
-        
-        <div className="firstOfThreeFlex">
-          <img src="/royalDesignLogoMobile.svg" height={150}/>
-        </div>
-
-        <div className="secondOfThreeFlex">
-          <div className="footerNav">
-            <div>
-              <a href="">Acasa</a>
-            </div>  
-            <div>
-              <a href="">Despre noi</a>
-            </div>  
-            <div>
-              <a href="">Servicii</a>        
-            </div>  
-            <div>
-              <a href="">Portofoliu</a>
-            </div>  
+        <section>
+          <div className="firstOfThreeFlex">
+            <img src="/royalDesignLogoMobile.svg" height={150}/>
           </div>
 
-          <div>
-            <button>Configurator Gard</button>
-          </div>
-        </div>
-
-        <div className="thirdOfThreeFlex">
-          <div>
-            <p>Contacteaza-ne</p>
-          </div>
-
-          <div className="thirdOfThreeFlex_address">
-            <p>Adresa:</p>
-
-            <div>
-              Arges,Topoloveni
-            </div>
-            
-            <div>
-              Goranesti Nr.86  
-            </div>
-            <div>
-              115503
-            </div>
-
-            <div style={{marginTop:'10px'}}>
-              <span style={{fontWeight: 'bolder'}}>Telefon:</span> <span>0777777777</span>
+          <div className="secondOfThreeFlex">
+            <div className="footerNav">
+              <div>
+                <a href="">Acasa</a>
+              </div>  
+              <div>
+                <a href="">Despre noi</a>
+              </div>  
+              <div>
+                <a href="">Servicii</a>        
+              </div>  
+              <div>
+                <a href="">Portofoliu</a>
+              </div>  
             </div>
 
             <div>
-              <span style={{fontWeight: 'bold'}}>Email:</span> <span>email@email.com</span>
+              <button type="button">Configurator Gard</button>
             </div>
           </div>
-        </div>
 
+          <div className="thirdOfThreeFlex">
+            <div>
+              <p>Contacteaza-ne</p>
+            </div>
+
+            <div className="thirdOfThreeFlex_address">
+              <p>Adresa:</p>
+
+              <div>
+                Arges,Topoloveni
+              </div>
+              
+              <div>
+                Goranesti Nr.86  
+              </div>
+              <div>
+                115503
+              </div>
+
+              <div style={{marginTop:'10px'}}>
+                <a href="tel:+40"><span style={{fontWeight: 'bolder'}}>Telefon:</span> <span>0777777777</span></a>
+              </div>
+
+              <div>
+                <a href="mailto:email@email.com"><span style={{fontWeight: 'bold'}}>Email:</span> <span>email@email.com</span></a>
+              </div>
+
+              <div className="thirdOfThreeFlex_socials">
+                <a href="https://www.google.com" target="_blank"><FaInstagram /></a>
+                <a href="https://www.google.com" target="_blank"><FaFacebook /></a>
+                <a href="https://www.google.com" target="_blank"><FaTiktok /></a>
+              </div>
+            </div>
+          </div>
+          </section>
+
+          <section>
+            <p>© 2024 Royal Design All Rights Reserved. Nicio parte a acestei publicații nu poate fi reprodusă, stocată într-un sistem de recuperare sau transmisă sub nicio formă sau prin orice mijloc, electronic, mecanic sau fotocopiere, înregistrare sau în alt mod fără permisiunea prealabilă a editorului.</p>
+          </section>
       </footer>
 
       </>
