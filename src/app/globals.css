@@ -120,8 +120,15 @@ a {
 }
 
 .separator{
-  height: 15px;
+  height: 55px;
   background-color: #242b64;
+
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+  font-weight: bold;
+  color: white;
 }
 
 .landingPageHrefs div a:hover{

@@ -43,7 +43,15 @@
         
       </header>
       
-      <div className="separator"></div>
+      <div className="separator">
+        <div>
+          <a href="">Acasa</a>
+        </div>
+
+        <div>
+        <a href="">Despre Noi</a>
+        </div>
+      </div>
       
       <section className="landingPageHrefs">
         <div>
