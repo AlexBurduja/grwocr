@@ -1,169 +1,167 @@
-  "use client"
-  import Image from "next/image";
-  import styles from "./page.module.css";
-  import { FaEnvelope, FaFacebook, FaInstagram, FaPhone, FaTiktok } from "react-icons/fa6";
-  import { FaSearch } from "react-icons/fa"
-  import { MdSmartphone } from "react-icons/md";
-  import { useRef } from "react";
+'use client'
+import { useState } from "react";
+import { createWorker } from "tesseract.js";
+import * as pdfjsLib from "pdfjs-dist/webpack";
 
-  import { Swiper, SwiperSlide } from 'swiper/react'
-  import { Autoplay, Pagination, Navigation } from 'swiper/modules';
+export default function Home() {
+  const [extractedData, setExtractedData] = useState("");
+  const [loading, setLoading] = useState(false);
 
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+    if (file && file.type === "application/pdf") {
+      setLoading(true);
+      await processPDF(file);
+      setLoading(false);
+    } else {
+      alert("Please upload a valid PDF file.");
+    }
+  };
 
-  import 'swiper/css';
-  import 'swiper/css/pagination';
-  import 'swiper/css/navigation';
+  const processPDF = async (file) => {
+    const reader = new FileReader();
+    reader.onload = async function () {
+      const typedarray = new Uint8Array(this.result);
+      const pdf = await pdfjsLib.getDocument(typedarray).promise;
 
-  export default function Home() {
+      // Process the first page
+      const page = await pdf.getPage(1);
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d");
+      const viewport = page.getViewport({ scale: 2 });
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
 
+      await page.render({ canvasContext: context, viewport }).promise;
 
+      const imageDataURL = canvas.toDataURL("image/png");
 
-    return (
-      <>
-      <header className="firstHeader">
-        <div className="firstHeader_item"><FaPhone /> 0777777777</div>
-        <div className="firstHeader_item"><FaEnvelope/> email@email.com</div>
-      </header>
-      
-      <header className="secondHeader">
-        <section className="secondHeader_img">
-          <img src="/royalDesignLogoDesktop.svg"/>
-        </section>
+      // Using Tesseract.js OCR to process image
+      const worker = await createWorker("eng");
+      const { data: { text } } = await worker.recognize(imageDataURL);
+      await worker.terminate();
 
-        <section className="secondHeader_rest">
-          <div className="secondHeader_rest_search">
-              <input type="text" name="search" autoComplete="off" placeholder="Cautare" />
-              <button><FaSearch /></button>
-          </div>
+      console.log("Raw OCR Text:", text); // Log OCR result to debug
 
-          <div>
-            <MdSmartphone /> 0777777777
-          </div>
-        </section>
-        
-      </header>
-      
-      <div className="separator">
-        <div>
-          <a href="">Acasa</a>
-        </div>
+      // Now let's check if OCR worked correctly before continuing
+      if (text.trim() === "") {
+        console.error("OCR did not recognize any text!");
+        setExtractedData("OCR did not recognize any text. Please check the PDF.");
+        return;
+      }
 
-        <div>
-        <a href="">Despre Noi</a>
-        </div>
-      </div>
-      
-      <section className="landingPageHrefs">
-        <div>
-          <a href="">Garduri</a>
-        </div>
-        <div>
-          <a href="">Porti</a>
-        </div>
-        <div>
-          <a href="">Depozitare</a>
-        </div>
-        <div>
-          <a href="">Sablare</a>
-        </div>
-        <div>
-          <a href="">Vopsire</a>
-        </div>
-        <div>
-          <a href="">Restaurare Jante</a>
-        </div>
-      </section>
+      // Clean and extract structured data
+      const formattedText = extractRelevantDataFromOCR(text);
+      setExtractedData(formattedText);
+      console.log("Formatted Extracted Data:", formattedText);
+    };
 
-      <Swiper
-        spaceBetween={30}
-        centeredSlides={true}
-        autoplay={{
-          delay: 4500,
-          disableOnInteraction: false,
-        }}
-        pagination={{
-          clickable: true,
-        }}
-        navigation={true}
-        modules={[Autoplay, Pagination, Navigation]}
-        className="mySwiper"
-        >
-        <SwiperSlide><img src="/royalDesignPoza.jpg"/></SwiperSlide>
-        <SwiperSlide><img src="/royalDesignPoza2.jpg"/></SwiperSlide>
-        <SwiperSlide><img src="/royalDesignPoza3.jpg"/></SwiperSlide>
-        <SwiperSlide><img src="/royalDesignPoza4.jpg"/></SwiperSlide>
-        <SwiperSlide><img src="/royalDesignPoza5.jpg"/></SwiperSlide>
-      </Swiper>
+    reader.readAsArrayBuffer(file);
+  };
 
-      
-      <footer>
-        <section>
-          <div className="firstOfThreeFlex">
-            <img src="/royalDesignLogoMobile.svg" height={150}/>
-          </div>
+  // Extract structured data from OCR text
+  const extractRelevantDataFromOCR = (ocrText) => {
+    let extracted = "";
+    const lines = ocrText.split("\n");
 
-          <div className="secondOfThreeFlex">
-            <div className="footerNav">
-              <div>
-                <a href="">Acasa</a>
-              </div>  
-              <div>
-                <a href="">Despre noi</a>
-              </div>  
-              <div>
-                <a href="">Servicii</a>        
-              </div>  
-              <div>
-                <a href="">Portofoliu</a>
-              </div>  
-            </div>
+    // Print the lines for debugging purposes (to identify where data is)
+    lines.forEach((line, index) => {
+      console.log(`Line ${index + 1}: ${line}`);
+    });
 
-            <div>
-              <button type="button">Configurator Gard</button>
-            </div>
-          </div>
+    // Line 1: Extract Policy Number (Line containing 'Nr.' after 'CONTRACT DE ASIGURARE')
+    const policyNumberLine = lines.find(line => line.includes("CONTRACT DE ASIGURARE"));
+    if (policyNumberLine) {
+      const policyNumberMatch = policyNumberLine.match(/Nr\.\s*(\d{9,})/); // Match 9+ digits for policy number
+      if (policyNumberMatch) {
+        extracted += `📌 Numar Polita: ${policyNumberMatch[1]}\n`;
+      } else {
+        console.log("No match for policy number in line:", policyNumberLine);
+      }
+    }
 
-          <div className="thirdOfThreeFlex">
-            <div>
-              <p>Contacteaza-ne</p>
-            </div>
+    // Line 2: Extract Name and Vehicle (Line containing 'Nume/Denumire Asigurat')
+    const nameAndVehicleLine = lines.find(line => line.includes("Nume/Denumire Asigurat"));
+    if (nameAndVehicleLine) {
+      const name = nameAndVehicleLine.match(/([A-Z]+(?: [A-Z]+)+)(?= Fel)/)[0];
+      const vehicle = nameAndVehicleLine.match(/(?<=\s[A-Z],\s)([A-Z]+(?:, [A-Z]+)+)/)[0]
+      if (name && vehicle) {
+        extracted += `📌 Nume Asigurat: ${name}\n`;
+        extracted += `📌 Marca/Model Asigurat: ${vehicle}\n`;
+      } else {
+        console.log("No match for Name/Vehicle in line:", nameAndVehicleLine);
+      }
+    }
 
-            <div className="thirdOfThreeFlex_address">
-              <p>Adresa:</p>
+    // Line 3: Extract CNP and Vehicle Registration Number (Line containing 'CUI/CNP. Proprietar')
+    const cnpAndRegNumberLine = lines.find(line => line.includes("CUI/CNP. Proprietar"));
+    if (cnpAndRegNumberLine) {
+      const cnp = cnpAndRegNumberLine.match(/\d{13}/)[0];
+      const proprietar = cnpAndRegNumberLine.match(/([A-Z]+\d+[A-Z]+)/)[0];
+      if (cnp && proprietar) {
+        extracted += `📌 CNP Proprietar: ${cnp}\n`;
+        extracted += `📌 Nr. Inmatriculare ${proprietar}\n`;
+      } else {
+        console.log("No match for CNP/Registration in line:", cnpAndRegNumberLine);
+      }
+    }
 
-              <div>
-                Arges,Topoloveni
-              </div>
-              
-              <div>
-                Goranesti Nr.86  
-              </div>
-              <div>
-                115503
-              </div>
+    // Line 4: Extract Vehicle Serial Number (Serie Sasiu)
+    const serieSasiuLine = lines.find(line => line.includes("Serie CIV"));
+    if (serieSasiuLine) {
+      const serieSasiuMatch = serieSasiuLine.match(/(?<=Serie CIV\/\s*\|\s*)([A-Z0-9]+)/)[0];
+      if (serieSasiuMatch) {
+        extracted += `📌 VIN: ${serieSasiuMatch}\n`;
+      } else {
+        console.log("No match for Serie Sasiu in line:", serieSasiuLine);
+      }
+    }
 
-              <div style={{marginTop:'10px'}}>
-                <a href="tel:+40"><span style={{fontWeight: 'bolder'}}>Telefon:</span> <span>0777777777</span></a>
-              </div>
+    // Line 5: Extract Validity Dates (Line containing 'Valabilitate Contract')
+    const validityLine = lines.find(line => line.includes("Valabilitate Contract"));
+if (validityLine) {
+  const firstDate = validityLine.match(/\d{2}\.\d{2}\.\d{4}/); // Match the first date with dots
+  let secondDate = validityLine.match(/\d{8} | \d{2}\.\d{2}\.\d{4}/); // Match the second date either with or without dots
 
-              <div>
-                <a href="mailto:email@email.com"><span style={{fontWeight: 'bold'}}>Email:</span> <span>email@email.com</span></a>
-              </div>
+  if (firstDate && secondDate) {
+    // If secondDate contains dots already, use it as is
+    if (secondDate[0].includes(".")) {
+      secondDate = secondDate[0]; // No change, as it's already in DD.MM.YYYY format
+    } else {
+      // If secondDate doesn't contain dots, format it
+      secondDate = formatDate(secondDate[0]);
+    }
 
-              <div className="thirdOfThreeFlex_socials">
-                <a href="https://www.google.com" target="_blank"><FaInstagram /></a>
-                <a href="https://www.google.com" target="_blank"><FaFacebook /></a>
-                <a href="https://www.google.com" target="_blank"><FaTiktok /></a>
-              </div>
-            </div>
-          </div>
-          </section>
-
-          <section>
-            <p>© 2024 Royal Design All Rights Reserved. Nicio parte a acestei publicații nu poate fi reprodusă, stocată într-un sistem de recuperare sau transmisă sub nicio formă sau prin orice mijloc, electronic, mecanic sau fotocopiere, înregistrare sau în alt mod fără permisiunea prealabilă a editorului.</p>
-          </section>
-      </footer>
-
-      </>
-    )
+    extracted += `📌 Valabilitate: De la ${firstDate[0]} pana la ${secondDate}\n`;
+  } else {
+    console.log("No match for validity dates in line:", validityLine);
   }
+}
+
+    // If no matching data found, return fallback
+    if (extracted === "") {
+      extracted = "No matching data found in OCR text.";
+    }
+
+    return extracted;
+  };
+
+  const formatDate = (dateStr) => {
+    const day = dateStr.substring(0, 2);
+    const month = dateStr.substring(2, 4);
+    const year = dateStr.substring(4, 8);
+    return `${day}.${month}.${year}`;
+  };
+
+  // const line = "Nume/Denumire Asigurat. | SCURTU GEORGE LAURENTIU Fel, Tip, Marca, | A, FORD, FUSION"
+
+  // console.log(line.match(/([A-Z]+(?: [A-Z]+)+)(?= Fel)/)[0])
+
+  return (
+    <div className="p-5">
+      <h2 className="text-xl font-bold mb-3">PDF OCR GRAWE</h2>
+      <input type="file" accept="application/pdf" onChange={handleFileChange} className="mb-3" />
+      {loading ? <p>Procesare...</p> : <pre className="w-full h-64 p-2 border">{extractedData}</pre>}
+    </div>
+  );
+}
